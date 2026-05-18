@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Upakowanie - mini gra edukacyjna</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="toolbar" aria-label="Panel sterowania">
+        <div class="brand">
+          <h1>Upakowanie</h1>
+          <p>Rzut komórki elementarnej i symetryczne kopie cząsteczki.</p>
+        </div>
+
+        <label class="field">
+          <span>Związek</span>
+          <select id="compoundSelect"></select>
+        </label>
+
+        <div class="segmented" role="group" aria-label="Oś rzutu">
+          <button class="axis-btn is-active" data-axis="z" type="button">z</button>
+          <button class="axis-btn" data-axis="y" type="button">y</button>
+          <button class="axis-btn" data-axis="x" type="button">x</button>
+        </div>
+
+        <button id="toggleAnswer" class="text-btn" type="button">Pokaż rozwiązanie</button>
+        <button id="resetBtn" class="icon-btn" type="button" aria-label="Reset">↺</button>
+      </section>
+
+      <section class="stage-wrap">
+        <canvas id="stage" width="1280" height="840" aria-label="Gra z rzutem komórki elementarnej"></canvas>
+        <div class="hud">
+          <strong id="scoreText">Dopasowanie: 0%</strong>
+          <span id="hintText">Przeciągnij cząsteczkę i użyj strzałek.</span>
+        </div>
+      </section>
+
+      <aside class="info-panel" aria-label="Dane krystalograficzne">
+        <h2 id="compoundName">-</h2>
+        <dl>
+          <div><dt>Komórka</dt><dd id="cellText">-</dd></div>
+          <div><dt>Grupa</dt><dd id="spaceGroupText">-</dd></div>
+          <div><dt>Z</dt><dd id="zText">-</dd></div>
+          <div><dt>Rzut</dt><dd id="axisText">wzdłuż z</dd></div>
+        </dl>
+        <h3>Operacje symetrii</h3>
+        <ol id="symmetryList"></ol>
+        <a id="sourceLink" href="#" target="_blank" rel="noreferrer">Źródło danych</a>
+      </aside>
+    </main>
+
+    <script src="src/app.js"></script>
+  </body>
+</html>
