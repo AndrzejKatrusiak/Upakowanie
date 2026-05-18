@@ -19,6 +19,11 @@
           <select id="compoundSelect"></select>
         </label>
 
+        <label class="field">
+          <span>Źródło danych</span>
+          <select id="dataSourceSelect"></select>
+        </label>
+
         <div class="segmented" role="group" aria-label="Oś rzutu">
           <button class="axis-btn is-active" data-axis="z" type="button">z</button>
           <button class="axis-btn" data-axis="y" type="button">y</button>
@@ -31,6 +36,11 @@
 
       <section class="stage-wrap">
         <canvas id="stage" width="1280" height="840" aria-label="Gra z rzutem komórki elementarnej"></canvas>
+        <label class="scale-control" aria-label="Skala obrazu">
+          <span>+</span>
+          <input id="scaleSlider" type="range" min="60" max="160" value="100" orient="vertical">
+          <span>-</span>
+        </label>
         <div class="hud">
           <strong id="scoreText">Dopasowanie: 0%</strong>
           <span id="hintText">Przeciągnij cząsteczkę i użyj strzałek.</span>
@@ -44,7 +54,11 @@
           <div><dt>Grupa</dt><dd id="spaceGroupText">-</dd></div>
           <div><dt>Z</dt><dd id="zText">-</dd></div>
           <div><dt>Rzut</dt><dd id="axisText">wzdłuż z</dd></div>
+          <div><dt>Skala</dt><dd id="scaleText">100%</dd></div>
         </dl>
+        <h3>Źródła danych</h3>
+        <ul id="sourceList"></ul>
+        <p id="sourceNote" class="note"></p>
         <h3>Operacje symetrii</h3>
         <ol id="symmetryList"></ol>
         <a id="sourceLink" href="#" target="_blank" rel="noreferrer">Źródło danych</a>

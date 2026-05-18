@@ -33,6 +33,27 @@ const DATASETS = [
     spaceGroup: "P -4 21 m",
     z: 2,
     source: "https://www.crystallography.net/cod/result?text=urea",
+    sources: [
+      {
+        label: "COD/CIF + model dydaktyczny",
+        primary: "https://www.crystallography.net/cod/result?text=urea",
+        links: [
+          ["Crystallography Open Database: wyszukiwanie CIF dla mocznika", "https://www.crystallography.net/cod/result?text=urea"],
+          ["International Tables for Crystallography, Vol. A: notacja i operacje grup przestrzennych", "https://it.iucr.org/Ac/contents/"],
+          ["Bondi 1964: promienie van der Waalsa", "https://doi.org/10.1021/j100785a001"]
+        ],
+        note: "Parametry komórki i grupa przestrzenna są traktowane jako dane krystalograficzne; współrzędne atomów w cząsteczce są uproszczonym modelem edukacyjnym."
+      },
+      {
+        label: "PubChem + COD",
+        primary: "https://pubchem.ncbi.nlm.nih.gov/compound/Urea",
+        links: [
+          ["PubChem: mocznik, dane cząsteczki", "https://pubchem.ncbi.nlm.nih.gov/compound/Urea"],
+          ["Crystallography Open Database: dane kryształu", "https://www.crystallography.net/cod/result?text=urea"]
+        ],
+        note: "Wariant pokazuje rozdzielenie źródeł: baza cząsteczek dla składu i baza krystalograficzna dla komórki elementarnej."
+      }
+    ],
     center: [0.25, 0.25, 0.24],
     symOps: [
       { label: "x, y, z", m: [[1,0,0],[0,1,0],[0,0,1]], t: [0,0,0], symbol: "1" },
@@ -58,6 +79,27 @@ const DATASETS = [
     spaceGroup: "P 21/c",
     z: 4,
     source: "https://www.crystallography.net/cod/result?text=glycine",
+    sources: [
+      {
+        label: "COD/CIF + model dydaktyczny",
+        primary: "https://www.crystallography.net/cod/result?text=glycine",
+        links: [
+          ["Crystallography Open Database: wyszukiwanie CIF dla glicyny", "https://www.crystallography.net/cod/result?text=glycine"],
+          ["International Tables for Crystallography, Vol. A: P 21/c", "https://it.iucr.org/Ac/contents/"],
+          ["Bondi 1964: promienie van der Waalsa", "https://doi.org/10.1021/j100785a001"]
+        ],
+        note: "Komórka i operacje symetrii służą jako zestaw dydaktyczny do przewidywania upakowania w grupie P 21/c."
+      },
+      {
+        label: "PubChem + COD",
+        primary: "https://pubchem.ncbi.nlm.nih.gov/compound/Glycine",
+        links: [
+          ["PubChem: glicyna, dane cząsteczki", "https://pubchem.ncbi.nlm.nih.gov/compound/Glycine"],
+          ["Crystallography Open Database: dane kryształu", "https://www.crystallography.net/cod/result?text=glycine"]
+        ],
+        note: "Wariant źródłowy do porównania identyfikacji cząsteczki z parametrami krystalograficznymi."
+      }
+    ],
     center: [0.18, 0.18, 0.22],
     symOps: [
       { label: "x, y, z", m: [[1,0,0],[0,1,0],[0,0,1]], t: [0,0,0], symbol: "1" },
@@ -87,6 +129,27 @@ const DATASETS = [
     spaceGroup: "Pbca",
     z: 4,
     source: "https://www.crystallography.net/cod/result?text=benzene",
+    sources: [
+      {
+        label: "COD/CIF + model dydaktyczny",
+        primary: "https://www.crystallography.net/cod/result?text=benzene",
+        links: [
+          ["Crystallography Open Database: wyszukiwanie CIF dla benzenu", "https://www.crystallography.net/cod/result?text=benzene"],
+          ["International Tables for Crystallography, Vol. A: Pbca", "https://it.iucr.org/Ac/contents/"],
+          ["Bondi 1964: promienie van der Waalsa", "https://doi.org/10.1021/j100785a001"]
+        ],
+        note: "Pierścień benzenowy jest wbudowanym modelem cząsteczki; wariant służy do demonstracji działania osi śrubowych i płaszczyzn poślizgu."
+      },
+      {
+        label: "PubChem + COD",
+        primary: "https://pubchem.ncbi.nlm.nih.gov/compound/Benzene",
+        links: [
+          ["PubChem: benzen, dane cząsteczki", "https://pubchem.ncbi.nlm.nih.gov/compound/Benzene"],
+          ["Crystallography Open Database: dane kryształu", "https://www.crystallography.net/cod/result?text=benzene"]
+        ],
+        note: "Wariant źródłowy oddziela opis cząsteczki od danych kryształu i ułatwia porównanie baz danych."
+      }
+    ],
     center: [0.2, 0.18, 0.22],
     symOps: [
       { label: "x, y, z", m: [[1,0,0],[0,1,0],[0,0,1]], t: [0,0,0], symbol: "1" },
@@ -101,9 +164,11 @@ const DATASETS = [
 
 const state = {
   dataset: DATASETS[0],
+  sourceIndex: 0,
   axis: "z",
   rotation: { x: 0.0, y: 0.0 },
   offset: { x: 0, y: 0 },
+  viewScale: 1,
   dragging: false,
   lastPointer: { x: 0, y: 0 },
   showAnswer: false
@@ -112,16 +177,21 @@ const state = {
 const canvas = document.querySelector("#stage");
 const ctx = canvas.getContext("2d");
 const compoundSelect = document.querySelector("#compoundSelect");
+const dataSourceSelect = document.querySelector("#dataSourceSelect");
 const axisButtons = document.querySelectorAll(".axis-btn");
 const toggleAnswer = document.querySelector("#toggleAnswer");
 const resetBtn = document.querySelector("#resetBtn");
+const scaleSlider = document.querySelector("#scaleSlider");
 
 const compoundName = document.querySelector("#compoundName");
 const cellText = document.querySelector("#cellText");
 const spaceGroupText = document.querySelector("#spaceGroupText");
 const zText = document.querySelector("#zText");
 const axisText = document.querySelector("#axisText");
+const scaleText = document.querySelector("#scaleText");
 const symmetryList = document.querySelector("#symmetryList");
+const sourceList = document.querySelector("#sourceList");
+const sourceNote = document.querySelector("#sourceNote");
 const sourceLink = document.querySelector("#sourceLink");
 const scoreText = document.querySelector("#scoreText");
 const hintText = document.querySelector("#hintText");
@@ -146,8 +216,16 @@ function init() {
 
   compoundSelect.addEventListener("change", () => {
     state.dataset = DATASETS.find((item) => item.id === compoundSelect.value) || DATASETS[0];
+    state.sourceIndex = 0;
+    populateSourceSelect();
     resetRound();
     syncInfo();
+  });
+
+  dataSourceSelect.addEventListener("change", () => {
+    state.sourceIndex = Number(dataSourceSelect.value) || 0;
+    syncInfo();
+    render();
   });
 
   axisButtons.forEach((button) => {
@@ -161,14 +239,30 @@ function init() {
   });
 
   resetBtn.addEventListener("click", resetRound);
+  scaleSlider.addEventListener("input", () => {
+    state.viewScale = Number(scaleSlider.value) / 100;
+    scaleText.textContent = `${scaleSlider.value}%`;
+    render();
+  });
   canvas.addEventListener("pointerdown", startDrag);
   canvas.addEventListener("pointermove", drag);
   window.addEventListener("pointerup", stopDrag);
   window.addEventListener("keydown", handleKeys);
   window.addEventListener("resize", render);
 
+  populateSourceSelect();
   syncInfo();
   render();
+}
+
+function populateSourceSelect() {
+  dataSourceSelect.replaceChildren(...state.dataset.sources.map((source, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = source.label;
+    return option;
+  }));
+  dataSourceSelect.value = String(state.sourceIndex);
 }
 
 function setAxis(axis) {
@@ -188,16 +282,33 @@ function resetRound() {
 
 function syncInfo() {
   const d = state.dataset;
+  const selectedSource = activeSource();
   compoundName.textContent = `${d.name} (${d.formula})`;
   cellText.textContent = `a=${d.cell.a.toFixed(3)} Å, b=${d.cell.b.toFixed(3)} Å, c=${d.cell.c.toFixed(3)} Å; α=${d.cell.alpha}°, β=${d.cell.beta}°, γ=${d.cell.gamma}°`;
   spaceGroupText.textContent = d.spaceGroup;
   zText.textContent = String(d.z);
+  scaleText.textContent = `${Math.round(state.viewScale * 100)}%`;
+  sourceList.replaceChildren(...selectedSource.links.map(([label, url]) => {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = label;
+    item.append(link);
+    return item;
+  }));
+  sourceNote.textContent = selectedSource.note;
   symmetryList.replaceChildren(...d.symOps.map((op) => {
     const li = document.createElement("li");
     li.textContent = `${op.symbol}: ${op.label}`;
     return li;
   }));
-  sourceLink.href = d.source;
+  sourceLink.href = selectedSource.primary;
+}
+
+function activeSource() {
+  return state.dataset.sources[state.sourceIndex] || state.dataset.sources[0];
 }
 
 function startDrag(event) {
@@ -283,7 +394,7 @@ function makeLayout(w, h) {
   const pad = Math.min(72, Math.max(34, w * 0.055));
   const d = state.dataset;
   const dims = axisDimensions(d.cell, state.axis);
-  const scale = Math.min((w - pad * 2) / dims.u, (h - pad * 2) / dims.v);
+  const scale = Math.min((w - pad * 2) / dims.u, (h - pad * 2) / dims.v) * state.viewScale;
   const cellW = dims.u * scale;
   const cellH = dims.v * scale;
   return {
@@ -485,7 +596,7 @@ function drawAnswerGhost(layout) {
 function currentLayoutScale() {
   const d = state.dataset;
   const dims = axisDimensions(d.cell, state.axis);
-  return Math.min((canvas.clientWidth - 92) / dims.u, (canvas.clientHeight - 92) / dims.v);
+  return Math.min((canvas.clientWidth - 92) / dims.u, (canvas.clientHeight - 92) / dims.v) * state.viewScale;
 }
 
 function markActiveMolecule(center) {
@@ -493,7 +604,7 @@ function markActiveMolecule(center) {
   ctx.lineWidth = 2;
   ctx.setLineDash([6, 4]);
   ctx.beginPath();
-  ctx.arc(center.x, center.y, 42, 0, Math.PI * 2);
+  ctx.arc(center.x, center.y, Math.max(28, 42 * state.viewScale), 0, Math.PI * 2);
   ctx.stroke();
   ctx.setLineDash([]);
 }

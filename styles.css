@@ -47,7 +47,7 @@ select {
 .toolbar {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(220px, 320px) auto auto auto;
+  grid-template-columns: minmax(220px, 1fr) minmax(190px, 280px) minmax(220px, 340px) auto auto auto;
   align-items: center;
   gap: 14px;
   padding: 12px;
@@ -131,6 +131,32 @@ select {
   overflow: hidden;
 }
 
+.scale-control {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 10px 8px;
+  border: 1px solid rgba(216, 224, 231, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--muted);
+  font-size: 13px;
+  backdrop-filter: blur(8px);
+}
+
+.scale-control input {
+  width: 32px;
+  height: 170px;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  appearance: slider-vertical;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 #stage {
   display: block;
   width: 100%;
@@ -204,7 +230,28 @@ select {
   font-size: 13px;
 }
 
-.info-panel a {
+.info-panel ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.info-panel li a {
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+#sourceLink {
   display: inline-block;
   margin-top: 18px;
   color: var(--accent);
